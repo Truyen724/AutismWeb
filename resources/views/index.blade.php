@@ -17,11 +17,24 @@
         <style>
             body {
                 font-family: 'Nunito', sans-serif;
+                flex-direction: row;
+                justify-content: center;
+            }
+            .form{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+            }
+            .form_blade{
+                width: 30%;
+                justify-content: center;
             }
         </style>
     </head>
     <body>
-        @include('form_dectect.form_request')
-
+        <div class ="form">
+            @include('form_dectect.form_request')
+        </div>
     </body>
 </html>
