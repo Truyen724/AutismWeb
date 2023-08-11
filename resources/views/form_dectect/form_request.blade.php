@@ -16,6 +16,7 @@
             background-color: #fff;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            justify-content: center;
         }
         label {
             font-weight: bold;
@@ -30,7 +31,7 @@
             box-sizing: border-box;
         }
         .photo-container {
-            text-align: center;
+            text-align: left;
         }
         #preview {
             max-width: 100%;
@@ -46,12 +47,27 @@
             border-radius: 3px;
             cursor: pointer;
         }
-        #btn_getpicture{
-            display: inline-block;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
+        .modal {
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
         }
+        #modal_contents{
+            display: none;
+        }
+        .modal-content {
+            position: relative;
+
+            background-color: #fff;
+
+            border-radius: 5px;
+        }
+
     </style>
 </head>
 <body>
@@ -76,76 +92,53 @@
             <img id="preview" src="" alt="Ảnh cá nhân">
         </div>
         <br>
+        <div class="modal">
+            <div id="cameraModal" class="modal"></div>
+            <div class="modal-content"  id = "modal_contents">
+                <button id="btn_exit" >Thoát</button>
+                <button id="captureBtn" >Chụp</button>
+                <button id="btn_changecamera" >Dổi camera</button>
+            </div>
+        </div>
         <button class="btn" type="submit">Gửi</button>
     </form>
-</div>
-<div id="cameraModal" class="modal">
-    <div class="modal-content">
-        <button id="btn_exit" >Thoát</button>
-        <button id="captureBtn" >Chụp</button>
-        <button id="btn_changecamera" >Dổi camera</button>
-    </div>
+
 </div>
 
-<style>
-    /* Thêm phần CSS cho modal */
-    .modal {
-        display: none;
-        position: fixed;
-        justify-content: center;
-        z-index: 1000;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.7);
-    }
-    .modal-content {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 5px;
-    }
-    .close {
-        position: absolute;
-        top: 10px;
-        right: 15px;
-        font-size: 24px;
-        font-weight: bold;
-        color: #333;
-        cursor: pointer;
-    }
-</style>
 <script>
     const cameraBtn = document.getElementById('cameraBtn');
     const preview = document.getElementById('preview');
     const photoInput = document.getElementById('photo');
     let stream = null;
     let videoStream = null;
-
+    const modal = document.getElementById('cameraModal');
+    const closeModalBtn = document.getElementById('btn_exit');
+    let ismodalopened = false;
+    const modal_contents =  document.getElementById('modal_contents');
     cameraBtn.addEventListener('click', async () => {
-        try {
-            stream = await navigator.mediaDevices.getUserMedia({ video: true });
-
-            if (stream) {
-                const video = document.createElement('video');
-                videoStream = video;
-                video.srcObject = stream;
-                video.autoplay = true;
-
-                const modal = document.getElementById('cameraModal');
-                modal.style.display = 'block';
-                modal.appendChild(video);
-
-                cameraBtn.style.display = 'none';
-            }
-        } catch (error) {
-            console.error('Error accessing camera:', error);
+        if(ismodalopened)
+        {
             alert('Không thể truy cập camera. Vui lòng kiểm tra lại.');
         }
+        else {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                if (stream) {
+                    const video = document.createElement('video');
+                    videoStream = video;
+                    videoStream.srcObject = stream;
+                    videoStream.autoplay = true;
+                    modal.style.display = 'block';
+                    modal.appendChild(video);
+                    modal_contents.style.display = 'flex'
+                }
+                ismodalopened = true;
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+                alert('Không thể truy cập camera. Vui lòng kiểm tra lại.');
+            }
+        }
+
     });
 
     photoInput.addEventListener('change', (event) => {
@@ -166,15 +159,35 @@
         const context = canvas.getContext('2d');
         context.drawImage(videoStream, 0, 0, canvas.width, canvas.height);
         preview.src = canvas.toDataURL('image/jpeg');
-
-        // Đóng video stream
-        const tracks = stream.getTracks();
-        tracks.forEach(track => track.stop());
-
-        const modal = document.getElementById('cameraModal');
-        modal.style.display = 'none';
+        closeModal();
     });
+    function closeModalOutside(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+    function closeModal() {
+        if (stream) {
+            const tracks = stream.getTracks();
+            tracks.forEach(track => track.stop());
+            stream = null;
+        }
+        modal_contents.style.display = 'none';
+        modal.removeChild(videoStream);
+        modal.style.display = 'none';
 
+
+        ismodalopened = false;
+
+    }
+    closeModalBtn.addEventListener('click', () => {
+        closeModal();
+    });
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
     // Xử lý khi form được gửi
     const form = document.querySelector('form');
     form.addEventListener('submit', (event) => {
@@ -184,7 +197,6 @@
         const age = document.getElementById('age').value;
         const gender = document.getElementById('gender').value;
         const photoDataUrl = preview.src;
-
         // Gửi dữ liệu lên server hoặc thực hiện các xử lý khác ở đây
         console.log('Tên:', name);
         console.log('Tuổi:', age);
