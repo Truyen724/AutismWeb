@@ -1,92 +1,196 @@
-
-
-<div class="form_blade">
-    <div class="columns p-7" style="margin-bottom: 95px">
-        <div class="column is-5 is-offset-1 p-5" style="margin-top: 95px">
-            <form id = "form-section" method="POST" action="">
-                {{ csrf_field() }}
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <strong>Name:</strong>
-                            <input type="text" name="name" class="form-control" placeholder="Name" value="{{ old('name') }}">
-                            @if ($errors->has('name'))
-                                <span class="text-danger">{{ $errors->first('name') }}</span>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <strong>Email:</strong>
-                            <input type="text" name="email" class="form-control" placeholder="Email" value="{{ old('email') }}">
-                            @if ($errors->has('email'))
-                                <span class="text-danger">{{ $errors->first('email') }}</span>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <strong>Address:</strong>
-                            <input type="text" name="address" class="form-control" placeholder="Address" value="{{ old('address') }}">
-                            @if ($errors->has('phone'))
-                                <span class="text-danger">{{ $errors->first('address') }}</span>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <strong>Phone:</strong>
-                            <input type="text" name="phone" class="form-control" placeholder="Phone" value="{{ old('phone') }}">
-                            @if ($errors->has('phone'))
-                                <span class="text-danger">{{ $errors->first('phone') }}</span>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <strong>Subject:</strong>
-                            <input type="text" name="subject" class="form-control" placeholder="Subject" value="{{ old('subject') }}">
-                            @if ($errors->has('subject'))
-                                <span class="text-danger">{{ $errors->first('subject') }}</span>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <strong>Message:</strong>
-                            <textarea name="message" rows="3" class="form-control">{{ old('message') }}</textarea>
-                            @if ($errors->has('message'))
-                                <span class="text-danger">{{ $errors->first('message') }}</span>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <strong>ReCaptcha:</strong>
-                            <div class="g-recaptcha" data-sitekey="{{ env('GOOGLE_RECAPTCHA_KEY') }}"></div>
-                            @if ($errors->has('g-recaptcha-response'))
-                                <span class="text-danger">{{ $errors->first('g-recaptcha-response') }}</span>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group text-left">
-                    <button id="submit-button" class="btn btn-success btn-submit">Submit</button>
-                </div>
-            </form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông tin cá nhân</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+        .photo-container {
+            text-align: center;
+        }
+        #preview {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        #btn_getpicture{
+            display: inline-block;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Thông tin cá nhân</h1>
+    <form>
+        <label for="name">Tên:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="age">Tuổi:</label>
+        <input type="text" id="age" name="age" required>
+        <label for="gender">Giới tính:</label>
+        <select id="gender" name="gender">
+            <option value="male">Nam</option>
+            <option value="female">Nữ</option>
+            <option value="other">Khác</option>
+        </select>
+        <div class="photo-container">
+            <label for="photo">Ảnh cá nhân:</label>
+            <input type="file" id="photo" accept="image/*">
+            <br>
+            <button class="btn" id="cameraBtn" type="button">Mở camera</button>
+            <img id="preview" src="" alt="Ảnh cá nhân">
         </div>
-
+        <br>
+        <button class="btn" type="submit">Gửi</button>
+    </form>
+</div>
+<div id="cameraModal" class="modal">
+    <div class="modal-content">
+        <button id="btn_exit" >Thoát</button>
+        <button id="captureBtn" >Chụp</button>
+        <button id="btn_changecamera" >Dổi camera</button>
     </div>
 </div>
-</div>
-</div>
-</div>
+
+<style>
+    /* Thêm phần CSS cho modal */
+    .modal {
+        display: none;
+        position: fixed;
+        justify-content: center;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+    .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+    }
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        cursor: pointer;
+    }
+</style>
+<script>
+    const cameraBtn = document.getElementById('cameraBtn');
+    const preview = document.getElementById('preview');
+    const photoInput = document.getElementById('photo');
+    let stream = null;
+    let videoStream = null;
+
+    cameraBtn.addEventListener('click', async () => {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+            if (stream) {
+                const video = document.createElement('video');
+                videoStream = video;
+                video.srcObject = stream;
+                video.autoplay = true;
+
+                const modal = document.getElementById('cameraModal');
+                modal.style.display = 'block';
+                modal.appendChild(video);
+
+                cameraBtn.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Error accessing camera:', error);
+            alert('Không thể truy cập camera. Vui lòng kiểm tra lại.');
+        }
+    });
+
+    photoInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                preview.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    const captureBtn = document.getElementById('captureBtn');
+    captureBtn.addEventListener('click', () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = videoStream.videoWidth;
+        canvas.height = videoStream.videoHeight;
+        const context = canvas.getContext('2d');
+        context.drawImage(videoStream, 0, 0, canvas.width, canvas.height);
+        preview.src = canvas.toDataURL('image/jpeg');
+
+        // Đóng video stream
+        const tracks = stream.getTracks();
+        tracks.forEach(track => track.stop());
+
+        const modal = document.getElementById('cameraModal');
+        modal.style.display = 'none';
+    });
+
+    // Xử lý khi form được gửi
+    const form = document.querySelector('form');
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        // Lấy dữ liệu từ các trường input
+        const name = document.getElementById('name').value;
+        const age = document.getElementById('age').value;
+        const gender = document.getElementById('gender').value;
+        const photoDataUrl = preview.src;
+
+        // Gửi dữ liệu lên server hoặc thực hiện các xử lý khác ở đây
+        console.log('Tên:', name);
+        console.log('Tuổi:', age);
+        console.log('Giới tính:', gender);
+        console.log('Ảnh:', photoDataUrl);
+    });
+</script>
+</body>
+</html>
