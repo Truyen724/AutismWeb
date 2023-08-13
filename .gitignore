@@ -16,3 +16,5 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+/smart_tourist-main/model
+/smart_tourist-main/__pycache__

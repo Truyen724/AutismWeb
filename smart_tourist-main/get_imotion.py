@@ -1,0 +1,10 @@
+def get_imotion(img):
+    # Anger
+    # contemp
+    # fear
+    # disgust
+    # Sadness
+    # Neutral
+    # suprise
+    # Happiness
+    return "Happiness"

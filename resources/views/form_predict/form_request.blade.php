@@ -31,7 +31,15 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             justify-content: center;
         }
-
+        #captureBtn
+        {
+            color: #007bff;
+            font-size:  20px ;
+        }
+        #btn_exit
+        {
+            margin-left: 20px;
+        }
         label {
             font-weight: bold;
         }
@@ -79,6 +87,7 @@
 
         #modal_contents {
             display: none;
+            justify-content: center;
         }
 
         .modal-content {
@@ -128,13 +137,12 @@
         <div class="modal_cam">
             <div id="cameraModal" class="modal_cam"></div>
             <div class="modal-content" id="modal_contents">
-                <button id="btn_exit">Thoát</button>
-                <button id="captureBtn">Chụp</button>
-                <button id="btn_changecamera">Dổi camera</button>
+                <button id="captureBtn" type="button">Chụp</button>
+                <button id="btn_exit" >X</button>
             </div>
         </div>
         <div>
-            <input type="checkbox" id="accept" name="accept" value="false">
+            <input type="checkbox" id="accept" name="accept">
             <label for="vehicle1"> Tôi đã động ý với <a class="link-accept" href="https://www.facebook.com/"> điểu khoản và chính sách</a> </label>
             <br>
         </div>
@@ -142,7 +150,7 @@
 {{--        @if ($errors->has('g-recaptcha-response'))--}}
 {{--            <span class="text-danger">{{ $errors->first('g-recaptcha-response') }}</span>--}}
 {{--        @endif--}}
-        <button class="btn" type="submit">Gửi yêu cầu</button>
+        <button class="btn" id = "button-submit" type="submit">Gửi yêu cầu</button>
     </form>
 
 </div>
@@ -177,7 +185,6 @@
                 alert('Không thể truy cập camera. Vui lòng kiểm tra lại.');
             }
         }
-
     });
     $(function () {
         $('#datetimepicker3').datetimepicker({
@@ -202,6 +209,9 @@
         const context = canvas.getContext('2d');
         context.drawImage(videoStream, 0, 0, canvas.width, canvas.height);
         preview.src = canvas.toDataURL('image/jpeg');
+        canvas.toBlob((blob) => {
+            formData.append('photo', blob, 'photo.jpg');
+        }, 'image/jpeg');
         closeModal();
     });
 
@@ -220,8 +230,6 @@
         modal_contents.style.display = 'none';
         modal.removeChild(videoStream);
         modal.style.display = 'none';
-
-
         ismodalopened = false;
 
     }
@@ -235,19 +243,43 @@
         }
     });
     // Xử lý khi form được gửi
+    let formData = new FormData();
     const form = document.querySelector('form');
-    form.addEventListener('submit', (event) => {
+    form.addEventListener('submit',async (event) => {
         event.preventDefault();
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
         // Lấy dữ liệu từ các trường input
-        const name = document.getElementById('name').value;
-        const age = document.getElementById('age').value;
+
+
+        const age = document.getElementById('datetimepicker3').value;
         const gender = document.getElementById('gender').value;
-        const photoDataUrl = preview.src;
+        const accept = document.getElementById('accept').checked;
+
+        // const photoDataUrl = "xxx";
         // Gửi dữ liệu lên server hoặc thực hiện các xử lý khác ở đây
-        console.log('Tên:', name);
-        console.log('Tuổi:', age);
-        console.log('Giới tính:', gender);
-        console.log('Ảnh:', photoDataUrl);
+        const states_agent = document.getElementById('statement_of_child').value;
+        formData.append('age', age);
+        formData.append('gender',gender);
+        formData.append('accept',accept);
+        if(accept)
+        try {
+            const response = await fetch('/data', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-Token': csrfToken, // Thêm CSRF token vào headers
+                },
+                body: formData,
+            });
+            if (response.ok) {
+                alert('Gửi dữ liệu thành công!');
+            } else {
+                alert('Có lỗi xảy ra khi gửi dữ liệu.');
+            }
+        } catch (error) {
+            console.error('Lỗi khi gửi request:', error);
+            alert('Có lỗi xảy ra khi gửi dữ liệu.');
+        }
     });
 </script>
 </body>

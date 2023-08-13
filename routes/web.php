@@ -16,3 +16,6 @@ use App\Http\Controllers\Client\HomeController;
 Route::get('/', function () {
     return view('index',[HomeController::class,'index']);
 });
+Route::post('/data', function () {
+    return view('index',[HomeController::class,'index']);
+});
