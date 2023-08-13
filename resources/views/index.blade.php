@@ -409,10 +409,11 @@
         .footer-icons {
             display: flex;
             justify-content: center;
+            padding: 1.5em;
         }
 
         .icon {
-            margin: 0 15px;
+
             display: flex;
             align-items: center;
         }
@@ -420,6 +421,10 @@
         .icon i {
             font-size: 1.4em;
             margin-right: 10px;
+        }
+        .phone{
+            margin-left: 1em;
+            margin-right: 1em;
         }
     </style>
 </head>
@@ -434,7 +439,7 @@
             <i class="fas fa-envelope"></i>
             <span>truyennt@lhu.edu.vn</span>
         </div>
-        <div class="icon">
+        <div class="icon phone">
             <i class="fas fa-phone"></i>
             <span>0394511955</span>
         </div>
