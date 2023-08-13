@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="https://www.google.com/recaptcha/api.js?" async defer></script>
 {{--    lịch--}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
@@ -94,7 +94,7 @@
 <body>
 <div class="container">
     <h1>Hệ thống hỗ trợ phát hiện sớm</h1>
-    <form>
+    <form action="">
         <label for="age">Tuổi:</label>
         <div class="form-group">
             <div class='input-group date' id='datetimepicker3'>
@@ -109,6 +109,13 @@
             <option value="male">Nam</option>
             <option value="female">Nữ</option>
             <option value="other">Khác</option>
+        </select>
+        <label for="statement_of_child">Chẩn đoán của nhà chuyên môn</label>
+        <select id="statement_of_child" name="statement_of_child">
+            <option value="not_yet">Chưa tham gia chẩn đoán</option>
+            <option value="soft_autistic">Trẻ bị tự kỷ mức độ nhẹ</option>
+            <option value="autistic">Trẻ bị tự kỷ mức độ nặng</option>
+            <option value="normal">Trẻ bình thường</option>
         </select>
         <div class="photo-container">
             <label for="photo">Ảnh cá nhân:</label>
@@ -131,11 +138,11 @@
             <label for="vehicle1"> Tôi đã động ý với <a class="link-accept" href="https://www.facebook.com/"> điểu khoản và chính sách</a> </label>
             <br>
         </div>
-        <div class="g-recaptcha" data-sitekey="{{ env('GOOGLE_RECAPTCHA_KEY') }}"></div>
-        @if ($errors->has('g-recaptcha-response'))
-            <span class="text-danger">{{ $errors->first('g-recaptcha-response') }}</span>
-        @endif
-        <button class="btn" type="submit">Gửi</button>
+{{--        <div class="g-recaptcha" data-sitekey="{{ env('GOOGLE_RECAPTCHA_KEY') }}"></div>--}}
+{{--        @if ($errors->has('g-recaptcha-response'))--}}
+{{--            <span class="text-danger">{{ $errors->first('g-recaptcha-response') }}</span>--}}
+{{--        @endif--}}
+        <button class="btn" type="submit">Gửi yêu cầu</button>
     </form>
 
 </div>
