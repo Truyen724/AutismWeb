@@ -3,11 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+{{--    lịch--}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">
+{{----}}
     <title>Thông tin cá nhân</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
+        }
+        .link-accept{
+            color: #007bff;
         }
         .container {
             max-width: 400px;
@@ -18,9 +31,11 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             justify-content: center;
         }
+
         label {
             font-weight: bold;
         }
+
         input[type="text"],
         select {
             width: 100%;
@@ -30,14 +45,17 @@
             border-radius: 3px;
             box-sizing: border-box;
         }
+
         .photo-container {
             text-align: left;
         }
+
         #preview {
             max-width: 100%;
             height: auto;
             margin-top: 10px;
         }
+
         .btn {
             display: inline-block;
             padding: 10px 20px;
@@ -47,7 +65,8 @@
             border-radius: 3px;
             cursor: pointer;
         }
-        .modal {
+
+        .modal_cam {
             display: flex;
             flex-direction: column;
             z-index: 1000;
@@ -57,9 +76,11 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.7);
         }
-        #modal_contents{
+
+        #modal_contents {
             display: none;
         }
+
         .modal-content {
             position: relative;
 
@@ -72,12 +93,17 @@
 </head>
 <body>
 <div class="container">
-    <h1>Thông tin cá nhân</h1>
+    <h1>Hệ thống hỗ trợ phát hiện sớm</h1>
     <form>
-        <label for="name">Tên:</label>
-        <input type="text" id="name" name="name" required>
         <label for="age">Tuổi:</label>
-        <input type="text" id="age" name="age" required>
+        <div class="form-group">
+            <div class='input-group date' id='datetimepicker3'>
+                <input type='text' class="form-control" />
+                <span class="input-group-addon">
+               <span class="glyphicon glyphicon-time"></span>
+               </span>
+            </div>
+        </div>
         <label for="gender">Giới tính:</label>
         <select id="gender" name="gender">
             <option value="male">Nam</option>
@@ -92,19 +118,27 @@
             <img id="preview" src="" alt="Ảnh cá nhân">
         </div>
         <br>
-        <div class="modal">
-            <div id="cameraModal" class="modal"></div>
-            <div class="modal-content"  id = "modal_contents">
-                <button id="btn_exit" >Thoát</button>
-                <button id="captureBtn" >Chụp</button>
-                <button id="btn_changecamera" >Dổi camera</button>
+        <div class="modal_cam">
+            <div id="cameraModal" class="modal_cam"></div>
+            <div class="modal-content" id="modal_contents">
+                <button id="btn_exit">Thoát</button>
+                <button id="captureBtn">Chụp</button>
+                <button id="btn_changecamera">Dổi camera</button>
             </div>
         </div>
+        <div>
+            <input type="checkbox" id="accept" name="accept" value="false">
+            <label for="vehicle1"> Tôi đã động ý với <a class="link-accept" href="https://www.facebook.com/"> điểu khoản và chính sách</a> </label>
+            <br>
+        </div>
+        <div class="g-recaptcha" data-sitekey="{{ env('GOOGLE_RECAPTCHA_KEY') }}"></div>
+        @if ($errors->has('g-recaptcha-response'))
+            <span class="text-danger">{{ $errors->first('g-recaptcha-response') }}</span>
+        @endif
         <button class="btn" type="submit">Gửi</button>
     </form>
 
 </div>
-
 <script>
     const cameraBtn = document.getElementById('cameraBtn');
     const preview = document.getElementById('preview');
@@ -114,15 +148,13 @@
     const modal = document.getElementById('cameraModal');
     const closeModalBtn = document.getElementById('btn_exit');
     let ismodalopened = false;
-    const modal_contents =  document.getElementById('modal_contents');
+    const modal_contents = document.getElementById('modal_contents');
     cameraBtn.addEventListener('click', async () => {
-        if(ismodalopened)
-        {
+        if (ismodalopened) {
             alert('Không thể truy cập camera. Vui lòng kiểm tra lại.');
-        }
-        else {
+        } else {
             try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                stream = await navigator.mediaDevices.getUserMedia({video: true});
                 if (stream) {
                     const video = document.createElement('video');
                     videoStream = video;
@@ -140,7 +172,11 @@
         }
 
     });
-
+    $(function () {
+        $('#datetimepicker3').datetimepicker({
+            format: 'DD-MM-YYYY'
+        });
+    });
     photoInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -161,11 +197,13 @@
         preview.src = canvas.toDataURL('image/jpeg');
         closeModal();
     });
+
     function closeModalOutside(event) {
         if (event.target === modal) {
             closeModal();
         }
     }
+
     function closeModal() {
         if (stream) {
             const tracks = stream.getTracks();
@@ -180,6 +218,7 @@
         ismodalopened = false;
 
     }
+
     closeModalBtn.addEventListener('click', () => {
         closeModal();
     });
