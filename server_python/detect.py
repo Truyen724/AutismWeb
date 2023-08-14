@@ -65,7 +65,7 @@ def mask_detect(image, rectangle = False):
         if(rectangle):
             cv2.putText(img,label+" "+percent,(startX,startY-10),cv2.FONT_HERSHEY_SIMPLEX,0.45,color,2)
             cv2.rectangle(img,(startX,startY),(endX,endY),color,2)
-    
+
     return img, arr_emotion
 
 def main():
