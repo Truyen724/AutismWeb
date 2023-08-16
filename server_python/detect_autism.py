@@ -65,7 +65,7 @@ class AutismDetect():
                 cv2.putText(self.img,self.label + str(self.pred[0][0]),(startX,startY-10),cv2.FONT_HERSHEY_SIMPLEX,0.45,color,2)
                 cv2.rectangle(self.img,(startX,startY),(endX,endY),color,2)
         return self.img,self.pred
-    def atism_detect_without_image(self, image, rectangle = True):
+    def atism_detect_without_image(self, image):
         self.img = image.copy()
         (self.h,self.w) = self.img.shape[:2]
         self.boxes, self.facial5points = self.detector.detect_faces(self.img)
@@ -77,15 +77,9 @@ class AutismDetect():
             self.face=self.img[startY:endY, startX:endX]
             self.face=cv2.resize(self.face,self.size_of_face)
             self.pred = self.detect_aut()
-            color = (0,255,0)
-            if(self.pred[0][0]>0.5):
-                self.label = self.list_category[1]
-            else:
-                self.label = self.list_category[0]
-            if(rectangle):
-                cv2.putText(self.img,self.label + str(self.pred[0][0]),(startX,startY-10),cv2.FONT_HERSHEY_SIMPLEX,0.45,color,2)
-                cv2.rectangle(self.img,(startX,startY),(endX,endY),color,2)
-        return self.pred
+
+
+        return self.pred[0][0]
     def runcam(self):
         self.cap = cv2.VideoCapture(0)
         if not  self.cap.isOpened():

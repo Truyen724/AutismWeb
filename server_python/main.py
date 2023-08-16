@@ -14,7 +14,8 @@ import json
 import os
 from PIL import Image
 import io
-
+from detect_autism import AutismDetect
+detect_autism = AutismDetect()
 # get_top_sim(10,api_string)
 app = Flask(__name__)
 csrf = CSRFProtect(app)
@@ -31,11 +32,12 @@ def make_prediction():
         image = f.read()
         image_np = np.frombuffer(image, dtype=np.uint8)
         image = cv2.imdecode(image_np, cv2.IMREAD_UNCHANGED)
+        out_put = detect_autism.atism_detect_without_image(image)
+        print(out_put)
+        # cv2.imshow("x",image)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
 
-
-        cv2.imshow("x",image)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
         return "xin chao"
 
 

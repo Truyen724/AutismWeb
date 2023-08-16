@@ -7,6 +7,8 @@ import numpy as np
 from align_faces import warp_and_crop_face, get_reference_facial_points
 from mtcnn.detector import MtcnnDetector
 from sys import platform
+from detect_autism import AutismDetect
+
 import os
 if platform == "linux" or platform == "linux2":
     import tflite_runtime.interpreter as tflite
