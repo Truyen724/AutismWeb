@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from numpy.linalg import norm
-# from get_imotion import get_imotion
+
 from flask_cors import CORS
 import cv2
 from flask import Flask, request
@@ -16,7 +16,7 @@ from PIL import Image
 import io
 from detect_autism import AutismDetect
 detect_autism = AutismDetect()
-# get_top_sim(10,api_string)
+
 app = Flask(__name__)
 csrf = CSRFProtect(app)
 CORS(app)
@@ -30,15 +30,37 @@ def make_prediction():
         print(request.form.get('gender'))
         f = request.files['photo']
         image = f.read()
-        image_np = np.frombuffer(image, dtype=np.uint8)
-        image = cv2.imdecode(image_np, cv2.IMREAD_UNCHANGED)
+        print(type(image))
+        image_np = np.frombuffer(image, np.uint8)
+        image = cv2.imdecode(image_np, cv2.IMREAD_COLOR)
+        print(image.shape)
         out_put = detect_autism.atism_detect_without_image(image)
-        print(out_put)
+
+        # print(out_put)
         # cv2.imshow("x",image)
         # cv2.waitKey(0)
         # cv2.destroyAllWindows()
-
-        return "xin chao"
+        out = {}
+        if(out_put==-1):
+            out = {
+                "code":"-1",
+                "percent":"-1",
+                "state":"không nhận diện được gương mặt trong hình"
+                }
+        else:
+            if(out_put<0.5):
+                out = {
+                    "code":"0",
+                    "percent":str(out_put),
+                    "state": "Có khả năng thấp"
+                }
+            elif(out_put>0.5):
+                out = {
+                "code":"1",
+                "percent":str(out_put),
+                "state": "Có khả năng cao"
+            }
+        return json.dumps(out)
 
 
 if __name__ == '__main__':

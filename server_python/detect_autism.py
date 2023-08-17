@@ -48,7 +48,6 @@ class AutismDetect():
         self.img = image.copy()
         (self.h,self.w) = self.img.shape[:2]
         self.boxes, self.facial5points = self.detector.detect_faces(self.img)
-
         for box in self.boxes:
             (startX,startY,endX,endY)=box[:4].astype('int')
             (startX,startY)=(max(0,startX),max(0,startY))
@@ -70,15 +69,16 @@ class AutismDetect():
         (self.h,self.w) = self.img.shape[:2]
         self.boxes, self.facial5points = self.detector.detect_faces(self.img)
         self.pred = -1
-        for box in self.boxes:
-            (startX,startY,endX,endY)=box[:4].astype('int')
-            (startX,startY)=(max(0,startX),max(0,startY))
-            (endX,endY)=(min(self.w-1,endX), min(self.h-1,endY))
-            self.face=self.img[startY:endY, startX:endX]
-            self.face=cv2.resize(self.face,self.size_of_face)
-            self.pred = self.detect_aut()
-
-
+        if(len(self.boxes)>0):
+            for box in self.boxes:
+                (startX,startY,endX,endY)=box[:4].astype('int')
+                (startX,startY)=(max(0,startX),max(0,startY))
+                (endX,endY)=(min(self.w-1,endX), min(self.h-1,endY))
+                self.face=self.img[startY:endY, startX:endX]
+                self.face=cv2.resize(self.face,self.size_of_face)
+                self.pred = self.detect_aut()
+        else:
+            return self.pred
         return self.pred[0][0]
     def runcam(self):
         self.cap = cv2.VideoCapture(0)
