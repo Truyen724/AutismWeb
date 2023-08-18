@@ -37,7 +37,7 @@ def make_prediction():
         cv2.imshow("x",image)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-        out = {}
+        
         if(out_put==-1):
             out = {
                 "code":"-1",

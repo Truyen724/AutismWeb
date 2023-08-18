@@ -3,7 +3,7 @@ from sys import platform
 from align_faces import warp_and_crop_face, get_reference_facial_points
 from mtcnn.detector import MtcnnDetector
 import datetime
-
+import time
 
 import numpy as np
 import cv2
@@ -75,14 +75,12 @@ class AutismDetect():
         self.current_millis = int(datetime.datetime.now().timestamp() * 1000)
         self.folder_save = './data_image/'
         self.filename = self.folder_save + self.gender + '_' + self.age + '_' + self.states_agent + '_' + str(self.current_datetime) + '_' + str(self.current_millis) +'.jpg'
-        print(self.filename)
+
         cv2.imwrite(os.path.join(self.filename), self.img)
-        print(os.path.join(self.filename))
-        # cv2.imwrite("x.jpg",self.img)
+
         (self.h,self.w) = self.img.shape[:2]
         try:
             self.boxes, self.facial5points = self.detector.detect_faces(self.img)
-            self.pred = -1
             if(len(self.boxes)>0):
                 for box in self.boxes:
                     (startX,startY,endX,endY)=box[:4].astype('int')
@@ -92,7 +90,7 @@ class AutismDetect():
                     self.face=cv2.resize(self.face,self.size_of_face)
                     self.pred = self.detect_aut()
             else:
-                return self.pred
+                return -1
         except:
             return -1
         return self.pred[0][0]

@@ -133,7 +133,7 @@
         </select>
         <div class="photo-container">
             <label for="photo">Ảnh cá nhân:</label>
-            <input type="file" id="photo" name="photo" accept=".jpg, .jpeg, .png">
+            <input type="file" id="photo" name="photo" accept=".jpg, .jpeg">
             <br>
             <button class="btn" id="cameraBtn" type="button">Mở camera</button>
             <img id="preview" src="" alt="Ảnh cá nhân">
@@ -147,6 +147,7 @@
             </div>
         </div>
         <div>
+
             <input type="checkbox" id="accept" name="accept">
             <label for="vehicle1"> Tôi đã động ý với <a class="link-accept" href="https://www.facebook.com/"> điểu khoản
                     và chính sách</a> </label>
@@ -158,7 +159,6 @@
         {{--        @endif--}}
         <button class="btn" id="button-submit" type="submit">Gửi yêu cầu</button>
     </form>
-
 </div>
 <script>
     const cameraBtn = document.getElementById('cameraBtn');
@@ -174,6 +174,7 @@
         if (ismodalopened) {
             alert('Không thể truy cập camera. Vui lòng kiểm tra lại.');
         } else {
+            photoInput.value = '';
             try {
                 stream = await navigator.mediaDevices.getUserMedia({video: true});
                 if (stream) {
@@ -207,7 +208,7 @@
             reader.readAsDataURL(file);
         }
     });
-    const formData = new FormData();
+    let formData = new FormData();
 
 
     const captureBtn = document.getElementById('captureBtn');
@@ -258,7 +259,7 @@
 
         // Lấy dữ liệu từ các trường input
 
-        const photo = photoInput.files[0];
+        const photo = photoInput.files[photoInput.files.length-1];
         const age = document.getElementById('datetime').value;
         const gender = document.getElementById('gender').value;
         const accept = document.getElementById('accept').checked;
@@ -295,6 +296,8 @@
                 console.error('Lỗi khi gửi request:', error);
                 alert('Có lỗi xảy ra khi gửi dữ liệu.');
             }
+        formData = new FormData();
+        photoInput.value = '';
     });
 </script>
 </body>

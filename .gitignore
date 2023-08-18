@@ -21,3 +21,4 @@ yarn-error.log
 /server_python/model/
 /server_python/__pycache__
 /server_python/image/
+/server_python/data_image/
