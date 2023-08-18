@@ -25,21 +25,18 @@ CORS(app)
 def make_prediction():
     program_starts = time.time()
     if request.method == 'POST':
-
         gender = request.form.get('gender')
-        print(request.form.get('gender'))
+        age = request.form.get('age')
+        states_agent = request.form.get('states_agent')
         f = request.files['photo']
         image = f.read()
-        print(type(image))
         image_np = np.frombuffer(image, np.uint8)
         image = cv2.imdecode(image_np, cv2.IMREAD_COLOR)
-        print(image.shape)
-        out_put = detect_autism.atism_detect_without_image(image)
-
-        # print(out_put)
-        # cv2.imshow("x",image)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
+        out_put = -1
+        out_put = detect_autism.atism_detect_without_image(image, gender, age, states_agent)
+        cv2.imshow("x",image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
         out = {}
         if(out_put==-1):
             out = {
@@ -61,7 +58,5 @@ def make_prediction():
                 "state": "Có khả năng cao"
             }
         return json.dumps(out)
-
-
 if __name__ == '__main__':
     app.run(host = "0.0.0.0",debug=True, port = 4999)

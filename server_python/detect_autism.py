@@ -2,7 +2,9 @@ import os
 from sys import platform
 from align_faces import warp_and_crop_face, get_reference_facial_points
 from mtcnn.detector import MtcnnDetector
-import time
+import datetime
+
+
 import numpy as np
 import cv2
 if platform == "linux" or platform == "linux2":
@@ -64,21 +66,35 @@ class AutismDetect():
                 cv2.putText(self.img,self.label + str(self.pred[0][0]),(startX,startY-10),cv2.FONT_HERSHEY_SIMPLEX,0.45,color,2)
                 cv2.rectangle(self.img,(startX,startY),(endX,endY),color,2)
         return self.img,self.pred
-    def atism_detect_without_image(self, image):
+    def atism_detect_without_image(self, image, gender, age, states_agent):
         self.img = image.copy()
+        self.gender = gender
+        self.age = age
+        self.states_agent = states_agent
+        self.current_datetime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        self.current_millis = int(datetime.datetime.now().timestamp() * 1000)
+        self.folder_save = './data_image/'
+        self.filename = self.folder_save + self.gender + '_' + self.age + '_' + self.states_agent + '_' + str(self.current_datetime) + '_' + str(self.current_millis) +'.jpg'
+        print(self.filename)
+        cv2.imwrite(os.path.join(self.filename), self.img)
+        print(os.path.join(self.filename))
+        # cv2.imwrite("x.jpg",self.img)
         (self.h,self.w) = self.img.shape[:2]
-        self.boxes, self.facial5points = self.detector.detect_faces(self.img)
-        self.pred = -1
-        if(len(self.boxes)>0):
-            for box in self.boxes:
-                (startX,startY,endX,endY)=box[:4].astype('int')
-                (startX,startY)=(max(0,startX),max(0,startY))
-                (endX,endY)=(min(self.w-1,endX), min(self.h-1,endY))
-                self.face=self.img[startY:endY, startX:endX]
-                self.face=cv2.resize(self.face,self.size_of_face)
-                self.pred = self.detect_aut()
-        else:
-            return self.pred
+        try:
+            self.boxes, self.facial5points = self.detector.detect_faces(self.img)
+            self.pred = -1
+            if(len(self.boxes)>0):
+                for box in self.boxes:
+                    (startX,startY,endX,endY)=box[:4].astype('int')
+                    (startX,startY)=(max(0,startX),max(0,startY))
+                    (endX,endY)=(min(self.w-1,endX), min(self.h-1,endY))
+                    self.face=self.img[startY:endY, startX:endX]
+                    self.face=cv2.resize(self.face,self.size_of_face)
+                    self.pred = self.detect_aut()
+            else:
+                return self.pred
+        except:
+            return -1
         return self.pred[0][0]
     def runcam(self):
         self.cap = cv2.VideoCapture(0)
@@ -101,4 +117,7 @@ class AutismDetect():
                 break
         self.release()
         cv2.destroyAllWindows()
+    def save_image(self):
+        pass
+
 
