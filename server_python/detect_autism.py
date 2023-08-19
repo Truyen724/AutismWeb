@@ -11,18 +11,26 @@ if platform == "linux" or platform == "linux2":
     import tflite_runtime.interpreter as tflite
 else:
     import tensorflow as tf
-class AutismDetect():
-    def __init__(self):
+import tensorflow as tf
 
+class AutismDetect():
+    def __init__(self,type_model = 'tf'):
+        self.type_model = type_model
         self.detector = MtcnnDetector()
         self.model_file = "./model/modeltflite.tflite"
-        self.get_model()
+        self.mode_file_tf = "./model_tf/model_with_dataVN_mtcnn_0_224_224.xx"
+        if(type_model == 'tf'):
+            self.get_model_tf()
+        else:
+             self.get_model_tflite()
         self.img = None
         self.list_category = ["None Autism","Autism"]
         self.size_of_face = (224,224)
         self.retangle = True
-
-    def get_model(self):
+    def get_model_tf(self):
+        self.model_tf = tf.keras.models.load_model(self.mode_file_tf)
+        pass
+    def get_model_tflite(self):
         if platform == "linux" or platform == "linux2":
             print(platform)
             print("______loadin model " + self.model_file)
@@ -30,7 +38,6 @@ class AutismDetect():
             self.model_tflite.allocate_tensors()
             self.input_details = self.model_tflite.get_input_details()
             self.output_details = self.model_tflite.get_output_details()
-
         else:
             print(platform)
             print("______loadin model " + self.model_file)
@@ -46,6 +53,12 @@ class AutismDetect():
         self.now = time.time()
         print("Time:",self.now - self.program_starts)
         return pred
+    def detect_aut_tf(self):
+        self.program_starts = time.time()
+        pred = self.model_tf.predict(np.array([self.face]))
+        self.now = time.time()
+        print("Time:",self.now - self.program_starts)
+        return pred
     def atism_detect(self, image, rectangle = True):
         self.img = image.copy()
         (self.h,self.w) = self.img.shape[:2]
@@ -56,7 +69,11 @@ class AutismDetect():
             (endX,endY)=(min(self.w-1,endX), min(self.h-1,endY))
             self.face=self.img[startY:endY, startX:endX]
             self.face=cv2.resize(self.face,self.size_of_face)
-            self.pred = self.detect_aut()
+            if(self.type_model == 'tf'):
+                self.pred = self.detect_aut_tf()
+                print(self.pred)
+            else:
+                self.pred = self.detect_aut()
             color = (0,255,0)
             if(self.pred[0][0]>0.5):
                 self.label = self.list_category[1]
@@ -68,6 +85,8 @@ class AutismDetect():
         return self.img,self.pred
     def atism_detect_without_image(self, image, gender, age, states_agent):
         self.img = image.copy()
+
+        # lưu hình ảnh
         self.gender = gender
         self.age = age
         self.states_agent = states_agent
@@ -75,8 +94,8 @@ class AutismDetect():
         self.current_millis = int(datetime.datetime.now().timestamp() * 1000)
         self.folder_save = './data_image/'
         self.filename = self.folder_save + self.gender + '_' + self.age + '_' + self.states_agent + '_' + str(self.current_datetime) + '_' + str(self.current_millis) +'.jpg'
-
         cv2.imwrite(os.path.join(self.filename), self.img)
+        # #############
 
         (self.h,self.w) = self.img.shape[:2]
         try:
@@ -88,12 +107,30 @@ class AutismDetect():
                     (endX,endY)=(min(self.w-1,endX), min(self.h-1,endY))
                     self.face=self.img[startY:endY, startX:endX]
                     self.face=cv2.resize(self.face,self.size_of_face)
-                    self.pred = self.detect_aut()
+                    if(self.type_model == 'tf'):
+                        self.pred = self.detect_aut_tf()
+                        print(self.pred)
+                    else:
+                        self.pred = self.detect_aut()
             else:
-                return -1
-        except:
-            return -1
+                return -5
+        except Exception as e:
+            print(e)
+            return -6
+        print(self.pred[0][0])
         return self.pred[0][0]
+    def atism_detect_without_image_use_tensorflow(self,image, gender, age, states_agent):
+        # lưu hình ảnh
+        self.gender = gender
+        self.age = age
+        self.states_agent = states_agent
+        self.current_datetime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        self.current_millis = int(datetime.datetime.now().timestamp() * 1000)
+        self.folder_save = './data_image/'
+        self.filename = self.folder_save + self.gender + '_' + self.age + '_' + self.states_agent + '_' + str(self.current_datetime) + '_' + str(self.current_millis) +'.jpg'
+        cv2.imwrite(os.path.join(self.filename), self.img)
+        # #############
+
     def runcam(self):
         self.cap = cv2.VideoCapture(0)
         if not  self.cap.isOpened():

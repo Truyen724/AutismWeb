@@ -186,7 +186,7 @@
         <div>
 
             <input type="checkbox" id="accept" name="accept">
-            <label for="vehicle1"> Tôi đã động ý với <a class="link-accept" href="https://www.facebook.com/"> điểu khoản
+            <label for="vehicle1"> Tôi đã động ý với <a class="link-accept" href=""> điểu khoản
                     và chính sách</a> </label>
             <br>
             <br>
@@ -324,7 +324,7 @@
         formData.append('accept', accept);
         formData.append('states_agent', states_agent);
         if (accept && preview.src.length>33 && age !== "" ){
-            alert(preview.src);
+
             const submit_button = document.getElementById('button-submit');
             submit_button.disabled = true;
             try {

@@ -34,9 +34,9 @@ def make_prediction():
         image = cv2.imdecode(image_np, cv2.IMREAD_COLOR)
         out_put = -1
         out_put = detect_autism.atism_detect_without_image(image, gender, age, states_agent)
-        cv2.imshow("x",image)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+#         cv2.imshow("x",image)
+#         cv2.waitKey(0)
+#         cv2.destroyAllWindows()
 
         if(out_put==-1):
             out = {

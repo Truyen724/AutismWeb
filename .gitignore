@@ -16,9 +16,9 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-/smart_tourist-main/model
-/smart_tourist-main/__pycache__
+
 /server_python/model/
 /server_python/__pycache__
 /server_python/image/
 /server_python/data_image/
+/server_python/model_tf/
