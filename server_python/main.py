@@ -37,7 +37,7 @@ def make_prediction():
         cv2.imshow("x",image)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-        
+
         if(out_put==-1):
             out = {
                 "code":"-1",
@@ -48,13 +48,13 @@ def make_prediction():
             if(out_put<0.5):
                 out = {
                     "code":"0",
-                    "percent":str(out_put),
+                    "percent":str(round(out_put,3)),
                     "state": "Có khả năng thấp"
                 }
             elif(out_put>0.5):
                 out = {
                 "code":"1",
-                "percent":str(out_put),
+                "percent":str(round(out_put,3)),
                 "state": "Có khả năng cao"
             }
         return json.dumps(out)
