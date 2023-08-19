@@ -113,7 +113,9 @@
             margin: 0 !important;
             padding: 1.5em;
             font-style: inherit;
-            font-family: "Times New Roman", sans-serif;
+            font-family: "Helvetica Neue", sans-serif;
+            font-weight: bold;
+            color:wheat;
         }
         .container{
             background-image:linear-gradient(#feada6 , #f5efef) ;
@@ -194,11 +196,15 @@
         <button class="btn" id="button-submit" type="submit">Gửi yêu cầu xác định</button>
     </form>
     <div id = "output">
-        <h2>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi !</h2>
+        <h2>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi !!!</h2>
         <br>
         <h3 id = "result"></h3>
         <br>
         <h3 id = "ratio"></h3>
+        <br>
+        <h4>Đây chưa phải là kết quả chính xác cuối cùng, bạn có thể thử lại nhiều lần</h4>
+        <br>
+        <h4>Để chắc chắn hơn, hãy liên hệ với các bác sĩ chuyên môn để có được tư vấn tốt nhất</h4>
     </div>
 </div>
 <script>
