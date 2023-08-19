@@ -29,7 +29,7 @@
         .container {
             max-width: 400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 0;
             background-color: #fff;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -102,12 +102,49 @@
 
             border-radius: 5px;
         }
+        #output {
+            visibility: hidden;
+            margin-top: 4em;
+            background-image:linear-gradient(#a1c4fd ,#c2e9fb) ;
+            padding: 2em;
+        }
+        .head-title{
+            text-align: center;
+            margin: 0 !important;
+            padding: 1.5em;
+            font-style: inherit;
+            font-family: "Times New Roman", sans-serif;
+        }
+        .container{
+            background-image:linear-gradient(#feada6 , #f5efef) ;
+        }
+        #button-submit{
+            background-image:linear-gradient(#48c6ef ,#6f86d6) ;
+        }
+        #cameraBtn{
+            background-image:linear-gradient(#48c6ef ,#6f86d6) ;
+        }
+        #preview{
 
+        }
+        .title{
+
+            background-image:linear-gradient(#48c6ef , #6f86d6) ;
+            margin: 0;
+
+        }
+        #form_main{
+            margin: 2em;
+        }
     </style>
+
 </head>
 <body>
 <div class="container">
-    <h1>Hệ thống hỗ trợ phát hiện sớm</h1>
+    <div class = "title">
+        <h1 class = "head-title">Hệ thống hỗ trợ phát hiện sớm</h1>
+    </div>
+
     <form action="" id =form_main>
         <label for="age">Tuổi:</label>
         <div class="form-group">
@@ -152,17 +189,26 @@
             <label for="vehicle1"> Tôi đã động ý với <a class="link-accept" href="https://www.facebook.com/"> điểu khoản
                     và chính sách</a> </label>
             <br>
+            <br>
         </div>
-        {{--        <div class="g-recaptcha" data-sitekey="{{ env('GOOGLE_RECAPTCHA_KEY') }}"></div>--}}
-        {{--        @if ($errors->has('g-recaptcha-response'))--}}
-        {{--            <span class="text-danger">{{ $errors->first('g-recaptcha-response') }}</span>--}}
-        {{--        @endif--}}
-        <button class="btn" id="button-submit" type="submit">Gửi yêu cầu</button>
+        <button class="btn" id="button-submit" type="submit">Gửi yêu cầu xác định</button>
     </form>
+    <div id = "output">
+        <h2>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi !</h2>
+        <br>
+        <h3 id = "result"></h3>
+        <br>
+        <h3 id = "ratio"></h3>
+    </div>
 </div>
 <script>
     const cameraBtn = document.getElementById('cameraBtn');
-    const preview = document.getElementById('preview');
+    const preview = document.getElementById('preview')
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Mã JavaScript bạn muốn thực thi khi trang web đã tải xong DOM
+        preview.scr = "";
+    });
     const photoInput = document.getElementById('photo');
     let stream = null;
     let videoStream = null;
@@ -254,6 +300,7 @@
 
     const form = document.querySelector('form');
     form.addEventListener('submit', async (event) => {
+
         event.preventDefault();
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
@@ -276,7 +323,10 @@
         }
         formData.append('accept', accept);
         formData.append('states_agent', states_agent);
-        if (accept)
+        if (accept && preview.src.length>33 && age !== "" ){
+            alert(preview.src);
+            const submit_button = document.getElementById('button-submit');
+            submit_button.disabled = true;
             try {
                 const response = await fetch('http://127.0.0.1:4999/predict', {
                     method: 'POST',
@@ -287,7 +337,10 @@
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    alert(data["state"] + data["percent"]);
+                    const result = document.getElementById("result");
+                    result.innerHTML = "Kết quả dự đoán:" + data["state"];
+                    const ratio = document.getElementById("ratio");
+                    ratio.innerHTML = "Tỉ lệ dự đoán:" + data["percent"];
                 } else {
                     alert('Có lỗi xảy ra khi gửi dữ liệu.');
                     alert(response);
@@ -296,8 +349,18 @@
                 console.error('Lỗi khi gửi request:', error);
                 alert('Có lỗi xảy ra khi gửi dữ liệu.');
             }
-        formData = new FormData();
-        photoInput.value = '';
+            const output  = document.getElementById('output');
+            output.style.visibility = 'visible';
+            formData = new FormData();
+            photoInput.value = '';
+            preview.src = '';
+            submit_button.disabled = false;
+        }
+        else {
+            alert("Vui lòng nhập đủ thông tin ")
+        }
+
+
     });
 </script>
 </body>
