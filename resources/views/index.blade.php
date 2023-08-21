@@ -427,6 +427,10 @@
             margin-left: 1em;
             margin-right: 1em;
         }
+        .phone-number{
+            display: flex;
+            flex-direction: column;
+        }
     </style>
 </head>
 <body>
@@ -438,11 +442,18 @@
     <div class="footer-icons">
         <div class="icon">
             <i class="fas fa-envelope"></i>
-            <span>truyennt@lhu.edu.vn</span>
+            <div class = "phone-number">
+                <span>thanhtran@lhu.edu.vn</span>
+                <span>truyennt@lhu.edu.vn</span>
+            </div>
         </div>
         <div class="icon phone">
             <i class="fas fa-phone"></i>
-            <span>0394511955</span>
+            <div class = "phone-number">
+                <span>0911961416</span>
+                <span>0394511955</span>
+            </div>
+
         </div>
         <div class="icon">
             <i class="fas fa-map-marker-alt"></i>

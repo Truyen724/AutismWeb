@@ -339,14 +339,14 @@
                     headers: {
                         'X-CSRF-Token': "{{ csrf_token() }}", // Thêm CSRF token vào headers
                     },
-                    body: formData,
+                    body: formData
                 });
                 if (response.ok) {
                     const data = await response.json();
                     const result = document.getElementById("result");
-                    result.innerHTML = "Kết quả dự đoán:" + data["state"];
+                    result.innerHTML = "Dự đoán mức độ nguy cơ: " + data["state"];
                     const ratio = document.getElementById("ratio");
-                    ratio.innerHTML = "Tỉ lệ dự đoán:" + data["percent"];
+                    ratio.innerHTML = "Tỉ lệ dự đoán: " + data["percent"];
                 } else {
                     alert('Có lỗi xảy ra khi gửi dữ liệu.');
                     alert(response);
