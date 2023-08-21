@@ -85,7 +85,6 @@ class AutismDetect():
         return self.img,self.pred
     def atism_detect_without_image(self, image, gender, age, states_agent):
         self.img = image.copy()
-
         # lưu hình ảnh
         self.gender = gender
         self.age = age

@@ -103,7 +103,7 @@
             border-radius: 5px;
         }
         #output {
-            visibility: hidden;
+            display: none;
             margin-top: 4em;
             background-image:linear-gradient(#a1c4fd ,#c2e9fb) ;
             padding: 2em;
@@ -334,7 +334,8 @@
             const submit_button = document.getElementById('button-submit');
             submit_button.disabled = true;
             try {
-                const response = await fetch('http://127.0.0.1:4999/predict', {
+//                const response = await fetch('http://172.17.148.254:4999/predict', {
+                    const response = await fetch({{ env('API_OUT') }}, {
                     method: 'POST',
                     headers: {
                         'X-CSRF-Token': csrfToken, // Thêm CSRF token vào headers
@@ -356,7 +357,7 @@
                 alert('Có lỗi xảy ra khi gửi dữ liệu.');
             }
             const output  = document.getElementById('output');
-            output.style.visibility = 'visible';
+            output.style.display = 'block';
             formData = new FormData();
             photoInput.value = '';
             preview.src = '';
