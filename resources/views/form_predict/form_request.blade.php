@@ -124,11 +124,10 @@
             background-image:linear-gradient(#48c6ef ,#6f86d6) ;
         }
         #cameraBtn{
+            display: none;
             background-image:linear-gradient(#48c6ef ,#6f86d6) ;
         }
-        #preview{
 
-        }
         .title{
 
             background-image:linear-gradient(#48c6ef , #6f86d6) ;
@@ -147,7 +146,7 @@
         <h1 class = "head-title">Hệ thống hỗ trợ phát hiện sớm</h1>
     </div>
 
-    <form action="" id =form_main>
+    <div id =form_main>
         <label for="age">Tuổi:</label>
         <div class="form-group">
             <div class='input-group date' id='datetimepicker3'>
@@ -165,8 +164,8 @@
         </select>
         <label for="statement_of_child">Chẩn đoán của nhà chuyên môn</label>
         <select id="statement_of_child" name="statement_of_child">
-            <option value="not_yet">Chưa tham gia chẩn đoán</option>
-            <option value="soft_autistic">Trẻ bị tự kỷ mức độ nhẹ</option>
+            <option value="not-yet">Chưa tham gia chẩn đoán</option>
+            <option value="soft-autistic">Trẻ bị tự kỷ mức độ nhẹ</option>
             <option value="autistic">Trẻ bị tự kỷ mức độ nặng</option>
             <option value="normal">Trẻ bình thường</option>
         </select>
@@ -175,7 +174,7 @@
             <input type="file" id="photo" name="photo" accept=".jpg, .jpeg">
             <br>
             <button class="btn" id="cameraBtn" type="button">Mở camera</button>
-            <img id="preview" src="" alt="Ảnh cá nhân">
+            <img id="preview" src="" alt="Ảnh của bạn">
         </div>
         <br>
         <div class="modal_cam">
@@ -193,8 +192,8 @@
             <br>
             <br>
         </div>
-        <button class="btn" id="button-submit" type="submit">Gửi yêu cầu xác định</button>
-    </form>
+        <button class="btn" id="button-submit">Gửi yêu cầu xác định</button>
+    </div>
     <div id = "output">
         <h2>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi !!!</h2>
         <br>
@@ -210,11 +209,12 @@
 <script>
     const cameraBtn = document.getElementById('cameraBtn');
     const preview = document.getElementById('preview')
-
-    document.addEventListener("DOMContentLoaded", function() {
-        // Mã JavaScript bạn muốn thực thi khi trang web đã tải xong DOM
-        preview.scr = "";
-    });
+    const output  = document.getElementById('output');
+    //
+    // document.addEventListener("DOMContentLoaded", function() {
+    //     // Mã JavaScript bạn muốn thực thi khi trang web đã tải xong DOM
+    //     preview.scr = "";
+    // });
     const photoInput = document.getElementById('photo');
     let stream = null;
     let videoStream = null;
@@ -304,14 +304,13 @@
     });
     // Xử lý khi form được gửi
 
-    const form = document.querySelector('form');
-    form.addEventListener('submit', async (event) => {
+    // const form = document.querySelector('form');
+    const form_main =  document.getElementById('form_main');
+    const submit_button =  document.getElementById('button-submit')
+    submit_button.addEventListener('click', async (event) => {
 
         event.preventDefault();
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-        // Lấy dữ liệu từ các trường input
-
+        output.style.display = 'none';
         const photo = photoInput.files[photoInput.files.length-1];
         const age = document.getElementById('datetime').value;
         const gender = document.getElementById('gender').value;
@@ -335,10 +334,10 @@
             submit_button.disabled = true;
             try {
 //                const response = await fetch('http://172.17.148.254:4999/predict', {
-                    const response = await fetch({{ env('API_OUT') }}, {
+                    const response = await fetch("{{ env('API_OUT')}}", {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-Token': csrfToken, // Thêm CSRF token vào headers
+                        'X-CSRF-Token': "{{ csrf_token() }}", // Thêm CSRF token vào headers
                     },
                     body: formData,
                 });
@@ -356,7 +355,7 @@
                 console.error('Lỗi khi gửi request:', error);
                 alert('Có lỗi xảy ra khi gửi dữ liệu.');
             }
-            const output  = document.getElementById('output');
+
             output.style.display = 'block';
             formData = new FormData();
             photoInput.value = '';

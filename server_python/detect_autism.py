@@ -112,10 +112,10 @@ class AutismDetect():
                     else:
                         self.pred = self.detect_aut()
             else:
-                return -5
+                return -1
         except Exception as e:
             print(e)
-            return -6
+            return -1
         print(self.pred[0][0])
         return self.pred[0][0]
     def atism_detect_without_image_use_tensorflow(self,image, gender, age, states_agent):
