@@ -143,7 +143,7 @@
 <body>
 <div class="container">
     <div class = "title">
-        <h1 class = "head-title">Hệ thống hỗ trợ phát hiện sớm</h1>
+        <h1 class = "head-title">Hệ thống hỗ trợ sàng lọc sớm trẻ tự kỷ</h1>
     </div>
 
     <div id =form_main>
@@ -170,7 +170,9 @@
             <option value="normal">Trẻ bình thường</option>
         </select>
         <div class="photo-container">
-            <label for="photo">Ảnh cá nhân:</label>
+            <label for="photo">Ảnh cá nhân: vui lòng chọn ảnh chứa chụp chính diện gương mặt</label>
+            <br>
+            <label for="photo">Hệ thống phù hợp với trẻ độ tuổi từ 2 đến 10</label>
             <input type="file" id="photo" name="photo" accept=".jpg, .jpeg">
             <br>
             <button class="btn" id="cameraBtn" type="button">Mở camera</button>
@@ -306,7 +308,8 @@
 
     // const form = document.querySelector('form');
     const form_main =  document.getElementById('form_main');
-    const submit_button =  document.getElementById('button-submit')
+    const submit_button =  document.getElementById('button-submit');
+    const date_time = document.getElementById('datetime');
     submit_button.addEventListener('click', async (event) => {
 
         event.preventDefault();
@@ -360,6 +363,7 @@
             formData = new FormData();
             photoInput.value = '';
             preview.src = '';
+            date_time.value = '';
             submit_button.disabled = false;
         }
         else {
