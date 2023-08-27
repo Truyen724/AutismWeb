@@ -206,6 +206,8 @@
         <h4>Đây chưa phải là kết quả chính xác cuối cùng, bạn có thể thử lại nhiều lần</h4>
         <br>
         <h4>Để chắc chắn hơn, hãy liên hệ với các bác sĩ chuyên môn để có được tư vấn tốt nhất</h4>
+        <br>
+        <h4>Hệ thông đang trong gia đoạn thử nghiệm, mọi thắc mắc khiếu nại vui lòng liên hệ với chúng tôi. Xin cảm ơn</h4>
     </div>
 </div>
 <script>
